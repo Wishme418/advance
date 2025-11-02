@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Ankita!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap');
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    html, body { height:100%; overflow:hidden; }
+
+    /* ---------- VIDEO BACKGROUND ---------- */
+    #bg-video {
+      position: fixed;
+      top: 50%; left: 50%;
+      min-width: 100%; min-height: 100%;
+      width: auto; height: auto;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    /* overlay to keep text readable */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.25);
+      z-index: 0;
+    }
+
+    /* ---------- CONTENT ---------- */
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .container {
+      text-align: center;
+      z-index: 10;
+      padding: 20px;
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 4.5rem;
+      margin-bottom: 20px;
+      text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .time-box {
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      border-radius: 15px;
+      min-width: 100px;
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.3);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .time-box span {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .time-box small {
+      font-size: .9rem;
+      opacity: .9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .message {
+      font-size: 1.4rem;
+      margin-top: 20px;
+      opacity: .95;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .cake { font-size:5rem; margin:20px 0; animation:bounce 2s infinite; }
+
+    @keyframes glow {
+      from { text-shadow:0 0 10px #fff; }
+      to   { text-shadow:0 0 20px #ff6b6b,0 0 30px #ff8e8e; }
+    }
+    @keyframes bounce {
+      0%,100%{transform:translateY(0);}
+      50%    {transform:translateY(-10px);}
+    }
+
+    #confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:5; }
+
+    footer { margin-top:40px; font-size:.9rem; opacity:.8; }
+
+    @media (max-width:600px){
+      h1{font-size:3rem;}
+      .time-box span{font-size:2rem;}
+      .cake{font-size:3.5rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VIDEO BACKGROUND -->
+  <video id="bg-video" autoplay muted loop playsinline>
+    <!-- Change the filename / format as needed -->
+    <source src="vid/background.mp4" type="video/mp4">
+    <!-- fallback for browsers that don’t support mp4 -->
+    <source src="vid/background.webm" type="video/webm">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <div class="overlay"></div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <h1>Happy Birthday<br>Ankita! 🎉</h1>
+    <div class="cake">🎂</div>
+
+    <div class="countdown" id="countdown">
+      <div class="time-box"><span id="days">00</span><small>Days</small></div>
+      <div class="time-box"><span id="hours">00</span><small>Hours</small></div>
+      <div class="time-box"><span id="minutes">00</span><small>Minutes</small></div>
+      <div class="time-box"><span id="seconds">00</span><small>Seconds</small></div>
+    </div>
+
+    <p class="message">
+      Wishing you an amazing year ahead filled with love, joy, and success! 
+      Can't wait to celebrate your special day! 💖
+    </p>
+
+    <footer>Made with ❤️ for Ankita</footer>
+  </div>
+
+  <!-- Confetti library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    // ---- COUNTDOWN ----
+    const birthday = new Date('2025-11-10T00:00:00');
+    const countdown = setInterval(() => {
+      const now = Date.now();
+      const distance = birthday - now;
+
+      const days    = Math.floor(distance / (1000*60*60*24));
+      const hours   = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((distance % (1000*60)) / 1000);
+
+      document.getElementById('days').textContent    = String(days).padStart(2,'0');
+      document.getElementById('hours').textContent   = String(hours).padStart(2,'0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
+
+      if (distance < 0) {
+        clearInterval(countdown);
+        document.getElementById('countdown').innerHTML = "<h2>🎉 It's Your Birthday! 🎉</h2>";
+        document.querySelector('h1').innerHTML = "Happy Birthday<br>Ankita! 🎂🎈";
+        triggerConfetti();
+      }
+    }, 1000);
+
+    // ---- CONFETTI ----
+    function triggerConfetti() {
+      const duration = 5*1000, end = Date.now() + duration;
+      (function frame() {
+        confetti({particleCount:7, angle:60, spread:55, origin:{x:0}});
+        confetti({particleCount:7, angle:120,spread:55, origin:{x:1}});
+        if (Date.now() < end) requestAnimationFrame(frame);
+      }());
+    }
+    setTimeout(triggerConfetti, 1000);
+  </script>
+</body>
+</html>
